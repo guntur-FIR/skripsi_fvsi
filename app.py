@@ -7,6 +7,7 @@ import joblib
 # ============================================================
 st.set_page_config(
     page_title="Voltage Stability Surrogate Model | Pulo Aceh",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -97,34 +98,36 @@ def load_model():
 model = load_model()
 
 # ============================================================
-# SIDEBAR - PARAMETER SKENARIO PENELITIAN PULO ACEH
+# SIDEBAR - PARAMETER SKENARIO SESUAI RUANG LINGKUP PULO ACEH
 # ============================================================
 with st.sidebar:
-    st.image("https://img.icons8.com/color/96/electricity.png", width=60)
-    st.title("Panel Kontrol Skenario")
-    st.markdown("<p style='color: #64748b; font-size: 0.85rem;'>Simulasi Integrasi Renewable Energy (PLTS & PLTB) pada Sistem Kelistrikan Pulo Aceh.</p>", unsafe_allow_html=True)
+    st.markdown("### ⚡ Pulo Aceh Grid")
+    st.markdown("<p style='color: #64748b; font-size: 0.85rem;'>Surrogate Model Screening Integrasi PLTS & PLTB (Random Forest).</p>", unsafe_allow_html=True)
     st.markdown("---")
 
-    st.subheader("⚙️ Parameter Operasi")
+    st.subheader("🎛️ Parameter Operasi")
     w_load_scaling = st.slider(
-        "Load Scaling (p.u.)", 
+        "📈 Load Scaling (p.u.)", 
         min_value=0.50, max_value=2.00, value=1.00, step=0.01,
-        help="Faktor pengali beban sistem Pulo Aceh"
+        help="Faktor pengali beban sistem eksisting Pulo Aceh"
     )
 
-    st.subheader("☀️ Pembangkit Listrik Tenaga Surya (PLTS)")
-    w_plts = st.number_input("Kapasitas PLTS (kW)", min_value=0.0, max_value=2000.0, value=100.0, step=10.0)
-    w_lok_plts = st.number_input("Lokasi Bus PLTS", min_value=1, max_value=100, value=15, step=1, help="Nomor Bus pada Sistem Pulo Aceh")
+    st.subheader("☀️ Pembangkit Listrik Tenaga Surya")
+    w_plts = st.slider("Kapasitas PLTS (kW)", min_value=0.0, max_value=300.0, value=100.0, step=10.0, help="Batasan domain data hingga 300 kW")
+    w_lok_plts = st.number_input("📍 Lokasi Bus PLTS", min_value=1, max_value=100, value=5, step=1, help="Nomor Bus penempatan PLTS pada jaringan Pulo Aceh")
 
-    st.subheader("🌬️ Pembangkit Listrik Tenaga Bayu (PLTB)")
-    w_pltb = st.number_input("Kapasitas PLTB (kW)", min_value=0.0, max_value=2000.0, value=100.0, step=10.0)
-    w_lok_pltb = st.number_input("Lokasi Bus PLTB", min_value=1, max_value=100, value=20, step=1, help="Nomor Bus pada Sistem Pulo Aceh")
+    st.subheader("🌬️ Pembangkit Listrik Tenaga Bayu")
+    w_pltb = st.slider("Kapasitas PLTB (kW)", min_value=0.0, max_value=300.0, value=100.0, step=10.0, help="Batasan domain data hingga 300 kW")
+    w_lok_pltb = st.number_input("📍 Lokasi Bus PLTB", min_value=1, max_value=100, value=10, step=1, help="Nomor Bus penempatan PLTB pada jaringan Pulo Aceh")
 
-    # Hitung Total DG secara otomatis
+    # Hitung Total DG secara otomatis (Maksimal total 600 kW sesuai ruang lingkup)
     w_total_dg = w_plts + w_pltb
     
     st.markdown("---")
-    st.info(f"**Total Kapasitas DG Terhitung:**\n### {w_total_dg:.2f} kW")
+    if w_total_dg > 600.0:
+        st.error(f"⚠️ Total DG ({w_total_dg:.1f} kW) melebihi batas domain data pelatihan (maks. 600 kW). Hasil prediksi mungkin kurang akurat.")
+    else:
+        st.info(f"**Total Kapasitas DG:**\n### {w_total_dg:.1f} kW / 600 kW")
 
     st.markdown("<br>", unsafe_allow_html=True)
     predict_button = st.button("🚀 Jalankan Prediksi AI", type="primary", use_container_width=True)
@@ -136,22 +139,23 @@ with st.sidebar:
 # Header Banner
 st.markdown("""
 <div class="dashboard-header">
-    <div class="dashboard-title"> Surrogate Model - Pulo Aceh</div>
-    <div class="dashboard-subtitle">Sistem Penunjang Keputusan Cepat (Fast Screening Tool) Berbasis Machine Learning untuk Analisis Jaringan Kelistrikan Pulo Aceh.</div>
+    <div class="dashboard-title">⚡ Dashboard Kestabilan Tegangan (FVSI Max) - Pulo Aceh</div>
+    <div class="dashboard-subtitle">Fast Screening Tool Berbasis Random Forest Machine Learning untuk Analisis Jaringan Distribusi Pulo Aceh.</div>
 </div>
 """, unsafe_allow_html=True)
 
-# Batasan Ruang Lingkup Penelitian Info Box
-with st.expander("📌 Informasi Ruang Lingkup & Batasan Penelitian", expanded=False):
+# Batasan Ruang Lingkup Penelitian Info Box (Sesuai Teks Asli)
+with st.expander("📌 Ruang Lingkup & Batasan Penelitian (Pulo Aceh)", expanded=False):
     st.markdown("""
-    * **Objek Sistem:** Jaringan Kelistrikan Wilayah **Pulo Aceh**.
-    * **Sumber Energi Terbarukan:** Integrasi Distributed Generation (DG) jenis **PLTS (Solar)** dan **PLTB (Bayu/Angin)**.
-    * **Indikator Kestabilan:** Menggunakan *Fast Voltage Stability Index* Maximum (**FVSI Max**).
-    * **Standar Evaluasi:**
+    * **Objek Sistem:** Jaringan distribusi tenaga listrik eksisting berbasis PLTD di wilayah **Pulo Aceh**.
+    * **Integrasi DG:** Skenario penambahan **PLTS** dan **PLTB** dengan kapasitas masing-masing hingga **300 kW** (Total DG hingga **600 kW**).
+    * **Ground Truth:** Diperoleh dari simulasi *load flow analysis* kondisi *steady-state* menggunakan **DIgSILENT PowerFactory**.
+    * **Parameter Sistem:** Tegangan bus ($V$), daya aktif ($P$), daya reaktif ($Q$), *voltage deviation*, *voltage rise*, dan *Fast Voltage Stability Index* (**FVSI**).
+    * **Indikator Status Stabilitas (Ambang Batas FVSI):**
       * $\\text{FVSI} < 0.90$ $\\rightarrow$ **Aman / Stabil**
-      * $0.90 \\le \\text{FVSI} < 1.00$ $\\rightarrow$ **Waspada / Mendekati Batas Kritis**
-      * $\\text{FVSI} \\ge 1.00$ $\\rightarrow$ **Kritis / Tidak Stabil (Risiko Collapse)**
-    * **Catatan:** Aplikasi ini berfungsi sebagai *screening* awal pendukung simulasi *DIgSILENT PowerFactory*.
+      * $0.90 \\le \\text{FVSI} < 1.00$ $\\rightarrow$ **Waspada / Mendekati Batas**
+      * $\\text{FVSI} \\ge 1.00$ $\\rightarrow$ **Kritis / Tidak Stabil (Risiko *Voltage Collapse*)**
+    * **Catatan Penting:** Model ini merupakan *screening* awal (*surrogate model* berbasis *Random Forest*) dan **bukan pengganti penuh DIgSILENT PowerFactory**. Kondisi mendekati kritis wajib diverifikasi ulang.
     """)
 
 # Main Prediction Logic
@@ -168,49 +172,49 @@ else:
         w_lok_pltb
     ]], columns=['Load Scaling', 'PLTS', 'PLTB', 'Total DG', 'Lokasi PLTS', 'Lokasi PLTB'])
 
-    if predict_button or True: # Otomatis hitung / jalankan
+    if predict_button or True: # Otomatis eksekusi
         hasil_pred = model.predict(input_df)[0]
         
         # Penentuan Status Berdasarkan Ambang Batas FVSI
         if hasil_pred < 0.90:
             status_text = "AMAN (STABIL)"
             badge_class = "badge-safe"
-            desc_text = "Sistem Pulo Aceh berada dalam kondisi operasi normal dan stabil. Margin tegangan masih sangat aman."
+            desc_text = "Sistem distribusi Pulo Aceh diprediksi berada dalam kondisi operasi normal dan stabil. Margin kestabilan tegangan aman."
         elif hasil_pred < 1.00:
             status_text = "WARNING (WASPADA)"
             badge_class = "badge-warning"
-            desc_text = "Sistem Pulo Aceh mendekati batas kestabilan. Diperlukan pengaturan daya atau penambahan kompensator."
+            desc_text = "Sistem Pulo Aceh mendekati batas kriteria kestabilan. Disarankan untuk memverifikasi ulang via DIgSILENT PowerFactory."
         else:
             status_text = "KRITIS (TIDAK STABIL)"
             badge_class = "badge-critical"
-            desc_text = "Peringatan! Sistem Pulo Aceh berisiko mengalami *voltage collapse* (runtuhnya tegangan)."
+            desc_text = "Peringatan! Indikator FVSI melebihi batas 1.00. Sistem berpotensi mengalami gangguan kestabilan / voltage collapse."
 
         # Tampilan Hasil Utama (Metrics & Card)
         col1, col2 = st.columns([1.5, 1])
 
         with col1:
-            st.markdown("### 📊 Hasil Evaluasi Model")
+            st.markdown("### 📊 Hasil Evaluasi Surrogate Model")
             m_col1, m_col2 = st.columns(2)
             with m_col1:
-                st.metric(label="Estimasi Nilai FVSI Max", value=f"{hasil_pred:.6f}")
+                st.metric(label="Estimasi FVSI Max (Prediksi)", value=f"{hasil_pred:.6f}")
             with m_col2:
-                st.markdown("**Status Sistem:**")
+                st.markdown("**Status Kestabilan:**")
                 st.markdown(f"<br><span class='{badge_class}'>✓ {status_text}</span>", unsafe_allow_html=True)
             
             st.markdown(f"<p style='margin-top: 1.5rem; color: #475467; font-size: 0.95rem;'>{desc_text}</p>", unsafe_allow_html=True)
 
         with col2:
-            st.markdown("### 📋 Ringkasan Skenario")
+            st.markdown("### 📋 Parameter Skenario Uji")
             st.markdown(f"""
-            - **Load Factor:** `{w_load_scaling} p.u.`
-            - **Total DG:** `{w_total_dg:.1f} kW`
-            - **PLTS:** `{w_plts} kW` (Bus {w_lok_plts})
-            - **PLTB:** `{w_pltb} kW` (Bus {w_lok_pltb})
+            - **Load Scaling:** `{w_load_scaling} p.u.`
+            - **Total Kapasitas DG:** `{w_total_dg:.1f} kW`
+            - **PLTS:** `{w_plts} kW` (Terhubung di Bus {w_lok_plts})
+            - **PLTB:** `{w_pltb} kW` (Terhubung di Bus {w_lok_pltb})
             """)
 
 # Footer
 st.markdown("---")
 st.markdown(
-    "<p style='text-align: center; color: #94a3b8; font-size: 0.8rem;'>Skripsi Program Studi Teknik Elektro Universitas Syiah Kuala · Surrogate Model Kestabilan Tegangan Pulo Aceh 2026</p>", 
+    "<p style='text-align: center; color: #94a3b8; font-size: 0.8rem;'>Skripsi Program Studi Teknik Elektro Universitas Syiah Kuala · Analisis Kestabilan Sistem Pulo Aceh Berbasis Machine Learning</p>", 
     unsafe_allow_html=True
 )
