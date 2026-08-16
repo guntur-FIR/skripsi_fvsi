@@ -4,7 +4,7 @@ import joblib
 
 st.set_page_config(page_title="Prediksi Kestabilan FVSI Max", page_icon="⚡", layout="centered")
 
-st.title("⚡ Dashboard Surrogate Model Kestabilan Tegangan")
+st.title("Dashboard Surrogate Model Kestabilan Tegangan")
 st.write("Sistem Pendukung Keputusan Berbasis Machine Learning untuk Analisis FVSI Max.")
 
 @st.cache_resource
@@ -46,7 +46,3 @@ else:
         st.markdown("### 📊 Hasil Evaluasi Sistem:")
         st.metric(label="Estimasi FVSI Max", value=f"{hasil_pred:.6f}")
         st.markdown(f"**Status Sistem:** :{color}[**{status}**]")
-
-# 2. Perintah untuk langsung mendownload file app.py ke laptop
-from google.colab import files
-files.download('app.py')
