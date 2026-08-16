@@ -138,7 +138,7 @@ with st.sidebar:
 # Header Banner
 st.markdown("""
 <div class="dashboard-header">
-    <div class="dashboard-title">SURROGATE MODEL (FVSI Max) - Pulo Aceh</div>
+    <div class="dashboard-title">SURROGATE MODEL - Pulo Aceh</div>
     <div class="dashboard-subtitle">Fast Screening Tool Berbasis Random Forest Machine Learning untuk Analisis Jaringan Distribusi Pulo Aceh.</div>
 </div>
 """, unsafe_allow_html=True)
