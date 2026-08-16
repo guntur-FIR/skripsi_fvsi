@@ -6,7 +6,7 @@ import joblib
 # PAGE CONFIGURATION
 # ============================================================
 st.set_page_config(
-    page_title="Surrogate Model | Pulo Aceh",
+    page_title="        Surrogate Model | Pulo Aceh      ",
     layout="wide",
     initial_sidebar_state="expanded"
 )
