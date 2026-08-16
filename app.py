@@ -136,7 +136,7 @@ with st.sidebar:
 # Header Banner
 st.markdown("""
 <div class="dashboard-header">
-    <div class="dashboard-title">⚡ Dashboard Kestabilan Tegangan (FVSI Max) - Pulo Aceh</div>
+    <div class="dashboard-title"> Surrogate Model - Pulo Aceh</div>
     <div class="dashboard-subtitle">Sistem Penunjang Keputusan Cepat (Fast Screening Tool) Berbasis Machine Learning untuk Analisis Jaringan Kelistrikan Pulo Aceh.</div>
 </div>
 """, unsafe_allow_html=True)
