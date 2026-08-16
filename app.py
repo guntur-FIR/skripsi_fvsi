@@ -6,13 +6,13 @@ import joblib
 # PAGE CONFIGURATION
 # ============================================================
 st.set_page_config(
-    page_title="        Surrogate Model | Pulo Aceh      ",
+    page_title="Surrogate Model | Pulo Aceh",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # ============================================================
-# MODERN ENTERPRISE CSS STYLING
+# MODERN MOBILE-FRIENDLY ENTERPRISE CSS STYLING
 # ============================================================
 st.markdown("""
 <style>
@@ -26,25 +26,28 @@ st.markdown("""
         background-color: #f8fafc;
     }
 
-    /* Header Banner */
+    /* Header Banner - Centered & Mobile Optimized */
     .dashboard-header {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        padding: 2.5rem 3rem;
+        padding: 2rem 1.5rem;
         border-radius: 20px;
         color: white;
         margin-bottom: 2rem;
         box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1);
+        text-align: center;
     }
     .dashboard-title {
-        font-size: 2.2rem;
+        font-size: 1.8rem;
         font-weight: 800;
         letter-spacing: -0.5px;
         margin-bottom: 0.5rem;
+        color: #ffffff;
     }
     .dashboard-subtitle {
-        font-size: 1rem;
+        font-size: 0.9rem;
         color: #94a3b8;
         font-weight: 400;
+        line-height: 1.5;
     }
 
     /* Status Badges */
@@ -54,8 +57,9 @@ st.markdown("""
         padding: 0.5rem 1rem;
         border-radius: 50px;
         font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         border: 1px solid #bbf7d0;
+        display: inline-block;
     }
     .badge-warning {
         background-color: #fef3c7;
@@ -63,8 +67,9 @@ st.markdown("""
         padding: 0.5rem 1rem;
         border-radius: 50px;
         font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         border: 1px solid #fde68a;
+        display: inline-block;
     }
     .badge-critical {
         background-color: #fee2e2;
@@ -72,8 +77,9 @@ st.markdown("""
         padding: 0.5rem 1rem;
         border-radius: 50px;
         font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         border: 1px solid #fecaca;
+        display: inline-block;
     }
 
     /* Custom Sidebar Styling */
@@ -100,32 +106,39 @@ model = load_model()
 VALID_BUS_LIST = [17, 18, 19, 20, 21, 22]
 
 # ============================================================
-# SIDEBAR - PARAMETER SKENARIO PULO ACEH
+# SIDEBAR - PARAMETER SKENARIO PULO ACEH (INPUT KETIK & PILIH)
 # ============================================================
 with st.sidebar:
-    st.markdown("Pulo Aceh Grid")
+    st.markdown("### ⚡ Pulo Aceh Grid")
     st.markdown("<p style='color: #64748b; font-size: 0.85rem;'>Surrogate Model Screening Integrasi PLTS & PLTB (Random Forest).</p>", unsafe_allow_html=True)
     st.markdown("---")
 
-    st.subheader("Parameter Operasi")
-    w_load_scaling = st.slider(
-        "Load Scaling (p.u.)", 
-        min_value=1.00, max_value=2.00, value=1.00, step=0.01,
-        help="Faktor pengali beban sistem eksisting Pulo Aceh (1.00 - 2.00)"
+    st.subheader("🎛️ Parameter Operasi")
+    w_load_scaling = st.number_input(
+        "📈 Load Scaling (p.u.)", 
+        min_value=1.00, max_value=2.00, value=1.00, step=0.01, format="%.2f",
+        help="Ketik faktor pengali beban sistem eksisting Pulo Aceh (1.00 - 2.00)"
     )
 
-    st.subheader("PLTS")
-    w_plts = st.slider("Kapasitas PLTS (kW)", min_value=0.0, max_value=300.0, value=100.0, step=10.0, help="Batasan domain data hingga 300 kW")
-    w_lok_plts = st.selectbox("📍 Lokasi Bus PLTS", options=VALID_BUS_LIST, index=0, help="Pilihan bus penempatan PLTS")
+    st.subheader("☀️ Pembangkit Listrik Tenaga Surya")
+    w_plts = st.number_input(
+        "Kapasitas PLTS (kW)", 
+        min_value=0.0, max_value=300.0, value=100.0, step=10.0, format="%.1f",
+        help="Ketik kapasitas PLTS (maks. 300 kW)"
+    )
+    w_lok_plts = st.selectbox("📍 Lokasi Bus PLTS", options=VALID_BUS_LIST, index=0, help="Pilih nomor bus penempatan PLTS")
 
-    st.subheader("PLTB")
-    w_pltb = st.slider("Kapasitas PLTB (kW)", min_value=0.0, max_value=300.0, value=100.0, step=10.0, help="Batasan domain data hingga 300 kW")
-    w_lok_pltb = st.selectbox("📍 Lokasi Bus PLTB", options=VALID_BUS_LIST, index=1, help="Pilihan bus penempatan PLTB")
+    st.subheader("🌬️ Pembangkit Listrik Tenaga Bayu")
+    w_pltb = st.number_input(
+        "Kapasitas PLTB (kW)", 
+        min_value=0.0, max_value=300.0, value=100.0, step=10.0, format="%.1f",
+        help="Ketik kapasitas PLTB (maks. 300 kW)"
+    )
+    w_lok_pltb = st.selectbox("📍 Lokasi Bus PLTB", options=VALID_BUS_LIST, index=1, help="Pilih nomor bus penempatan PLTB")
 
-    # Hitung Total DG dan Estimasi Persen Penetrasi (Asumsi kapasitas basis sistem total misal 1000 kW atau 1 MW untuk basis kalkulasi persentase)
+    # Hitung Total DG dan Estimasi Persen Penetrasi
     w_total_dg = w_plts + w_pltb
-    # Estimasi persentase penetrasi terhadap basis beban/kapasitas sistem Pulo Aceh
-    base_system_capacity = 1000.0 # kW (Dapat disesuaikan dengan kapasitas basis sistem eksisting)
+    base_system_capacity = 1000.0  # kW (Basis kapasitas sistem eksisting Pulo Aceh)
     penetration_pct = (w_total_dg / base_system_capacity) * 100
     
     st.markdown("---")
@@ -135,10 +148,10 @@ with st.sidebar:
 # MAIN CONTENT AREA
 # ============================================================
 
-# Header Banner
+# Header Banner (Rata Tengah / Centered)
 st.markdown("""
 <div class="dashboard-header">
-    <div class="dashboard-title">SURROGATE MODEL - Pulo Aceh</div>
+    <div class="dashboard-title">⚡ SURROGATE MODEL - Pulo Aceh</div>
     <div class="dashboard-subtitle">Fast Screening Tool Berbasis Random Forest Machine Learning untuk Analisis Jaringan Distribusi Pulo Aceh.</div>
 </div>
 """, unsafe_allow_html=True)
@@ -157,7 +170,7 @@ else:
         w_lok_pltb
     ]], columns=['Load Scaling', 'PLTS', 'PLTB', 'Total DG', 'Lokasi PLTS', 'Lokasi PLTB'])
 
-    # Tombol Prediksi diletakkan di tengah dengan tampilan menarik
+    # Tombol Prediksi diletakkan di tengah dengan ukuran menarik
     st.markdown("<br>", unsafe_allow_html=True)
     col_space1, col_btn, col_space2 = st.columns([1, 2, 1])
     with col_btn:
@@ -196,9 +209,9 @@ else:
             st.markdown(f"<p style='margin-top: 1.5rem; color: #475467; font-size: 0.95rem;'>{desc_text}</p>", unsafe_allow_html=True)
 
         with col2:
-            st.markdown("### 📋 Skenario")
+            st.markdown("### 📋 Skenario & Penetrasi")
             st.markdown(f"""
-            - **Load Scaling:** `{w_load_scaling:.2f} p.u.`
+            - **Load Scaling:** `{w_load_scaling:.2f}`
             - **Total Kapasitas DG:** `{w_total_dg:.1f} kW`
             - **Nilai Penetrasi DG:** `{penetration_pct:.1f}%`
             - **PLTS:** `{w_plts} kW` (Bus {w_lok_plts})
