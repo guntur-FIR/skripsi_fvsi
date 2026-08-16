@@ -7,6 +7,7 @@ import joblib
 # ============================================================
 st.set_page_config(
     page_title="Surrogate Model | Pulo Aceh",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -136,10 +137,11 @@ with st.sidebar:
     )
     w_lok_pltb = st.selectbox("📍 Lokasi Bus PLTB", options=VALID_BUS_LIST, index=1, help="Pilih nomor bus penempatan PLTB")
 
-    # Hitung Total DG dan Estimasi Persen Penetrasi
+    # Hitung Total DG dan Penetrasi Berdasarkan Beban Aktual (91.42 kW * Load Scaling)
     w_total_dg = w_plts + w_pltb
-    base_system_capacity = 1000.0  # kW (Basis kapasitas sistem eksisting Pulo Aceh)
-    penetration_pct = (w_total_dg / base_system_capacity) * 100
+    base_actual_load = 91.42  # kW (Beban aktual eksisting Pulo Aceh)
+    current_system_load = base_actual_load * w_load_scaling
+    penetration_pct = (w_total_dg / current_system_load) * 100
     
     st.markdown("---")
     st.info(f"**Total Kapasitas DG:** {w_total_dg:.1f} kW\n**Penetrasi DG:** {penetration_pct:.1f}%")
